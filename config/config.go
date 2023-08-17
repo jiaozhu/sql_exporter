@@ -201,7 +201,10 @@ func (t *TargetConfig) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	if t.DSN == "" {
 		return fmt.Errorf("missing data_source_name for target %+v", t)
 	}
-	checkCollectorRefs(t.CollectorRefs, "target")
+	err := checkCollectorRefs(t.CollectorRefs, "target")
+	if err != nil {
+		return err
+	}
 
 	return checkOverflow(t.XXX, "target")
 }
@@ -238,7 +241,10 @@ func (j *JobConfig) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	if j.Name == "" {
 		return fmt.Errorf("missing name for job %+v", j)
 	}
-	checkCollectorRefs(j.CollectorRefs, fmt.Sprintf("job %q", j.Name))
+	err := checkCollectorRefs(j.CollectorRefs, fmt.Sprintf("job %q", j.Name))
+	if err != nil {
+		return err
+	}
 
 	if len(j.StaticConfigs) == 0 {
 		return fmt.Errorf("no targets defined for job %q", j.Name)
